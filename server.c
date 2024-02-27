@@ -10,10 +10,10 @@ void main() {
     server.sin_port = htons(3000);
     server.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    printf("Creating Socket...\n");
+    printf("Creating Socket...");
     int s = socket(AF_INET, SOCK_STREAM, 0);
-    if (s < 0) { printf("Creating Socket...\t\t[FAIL]\n"); return; }
-    else printf("Creating Socket...\t\t[OK]\n");
+    if (s < 0) { printf("\rCreating Socket...\t\t[FAIL]\n"); return; }
+    else printf("\rCreating Socket...\t\t[OK]\n");
 
     printf("Binding...\n");
     int b = bind(s, (struct sockaddr*) &server, sizeof(server));
@@ -31,8 +31,8 @@ void main() {
         if (ns < 0) { printf("Connection to client Failed\n"); return; }
         else printf("New Client Connected\n");
 
-        char readbuff[100];
-        int r = read(ns, readbuff, 100);
-        printf("%d\n", r);
+        char read_buff[100];
+        int r = read(ns, read_buff, 100);
+        printf("%s", read_buff);
     }
 }

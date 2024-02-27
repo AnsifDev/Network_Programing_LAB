@@ -20,5 +20,7 @@ void main() {
     if (c < 0) { printf("Connecting to Server...\t\t[FAIL]\n"); return; }
     else printf("Connecting to Server...\t\t[OK]\n");
 
-    write(c, "Hello\n", 100);
+    char write_buff[] = "Hello\n";
+    int written_size = write(s, write_buff, strlen(write_buff));
+    printf("%d\n", written_size);
 }
