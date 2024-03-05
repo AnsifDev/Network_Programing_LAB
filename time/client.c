@@ -7,8 +7,8 @@
 int main() {
     struct sockaddr_in server;
     server.sin_family = AF_INET;
-    server.sin_port = htons(3000);
-    server.sin_addr.s_addr = htonl(INADDR_ANY);
+    server.sin_port = htons(5000);
+    server.sin_addr.s_addr = htonl(0x0ab7d4cb);
 
     printf("Creating Socket...\n");
     int s = socket(AF_INET, SOCK_STREAM, 0);

@@ -1,14 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
 
-int is_palindrome(char *str) {
-    int slen  = strlen(str);
-    for (int i = 0; i < slen/2; i++) 
-        if (str[i] != str[slen-1-i]) return 0;
-    return 1;
+int factorial(int num) {
+    if (num > 2) return num*factorial(num-1);
+    if (num < 1) return 1;
+    return num;
 }
 
 int main() {
@@ -44,9 +44,10 @@ int main() {
             int r = read(ns, read_buff, 100);
             if (r == 0) break;
             if (strcmp("SHUTDOWN", read_buff) == 0) { run = 0; break; }
-            
-            int is_pal = is_palindrome(read_buff);
-            sprintf(write_buff, "%s is%sa palindrome", read_buff, is_pal? " ": " not ");
+
+            int n = atoi(read_buff);
+            int f = factorial(n);
+            sprintf(write_buff, "The factorial of %d is %d", n, f);
 
             write(ns, write_buff, strlen(write_buff)+1);
             printf("  %s\n", write_buff);

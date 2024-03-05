@@ -4,11 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 
-int is_palindrome(char *str) {
-    int slen  = strlen(str);
-    for (int i = 0; i < slen/2; i++) 
-        if (str[i] != str[slen-1-i]) return 0;
-    return 1;
+void make_response(char *str) {
+    printf("  >> ");
+    scanf("%s", str);
 }
 
 int main() {
@@ -44,12 +42,10 @@ int main() {
             int r = read(ns, read_buff, 100);
             if (r == 0) break;
             if (strcmp("SHUTDOWN", read_buff) == 0) { run = 0; break; }
-            
-            int is_pal = is_palindrome(read_buff);
-            sprintf(write_buff, "%s is%sa palindrome", read_buff, is_pal? " ": " not ");
 
+            printf("  %s\n", read_buff);
+            make_response(write_buff);
             write(ns, write_buff, strlen(write_buff)+1);
-            printf("  %s\n", write_buff);
         }
 
         printf("Client Disconnected\n");

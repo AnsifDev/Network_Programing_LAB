@@ -3,18 +3,19 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
-int is_palindrome(char *str) {
-    int slen  = strlen(str);
-    for (int i = 0; i < slen/2; i++) 
-        if (str[i] != str[slen-1-i]) return 0;
-    return 1;
+void get_time(char *str) {
+    time_t t = time(NULL);
+    // sprintf(str, "%s", ctime(&t));
+    struct tm *st = localtime(&t);
+    sprintf(str, "%d/%d/%d %d:%d:%d", st->tm_mday, st->tm_mon, st->tm_year+1900, st->tm_hour, st->tm_min, st->tm_sec);
 }
 
 int main() {
     struct sockaddr_in server;
     server.sin_family = AF_INET;
-    server.sin_port = htons(3000);
+    server.sin_port = htons(5000);
     server.sin_addr.s_addr = htonl(INADDR_ANY);
 
     printf("Creating Socket...\n");
@@ -44,9 +45,9 @@ int main() {
             int r = read(ns, read_buff, 100);
             if (r == 0) break;
             if (strcmp("SHUTDOWN", read_buff) == 0) { run = 0; break; }
-            
-            int is_pal = is_palindrome(read_buff);
-            sprintf(write_buff, "%s is%sa palindrome", read_buff, is_pal? " ": " not ");
+
+            if (strcmp("TIME", read_buff) == 0) get_time(write_buff);
+            else sprintf(write_buff, "Unknown command");
 
             write(ns, write_buff, strlen(write_buff)+1);
             printf("  %s\n", write_buff);
