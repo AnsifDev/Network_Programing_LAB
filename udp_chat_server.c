@@ -4,6 +4,18 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+int getstr(char *str, FILE *src) {
+    int str_len = 0;
+    char c;
+    while (1) {
+        c = fgetc(src);
+        if (c == '\n') { if (str_len > 0) break; }
+        else str[str_len++] = c;
+    } 
+    str[str_len] = '\0';
+    return str_len;
+}
+
 int main() {
 	struct sockaddr_in server, client;
 	server.sin_family = AF_INET;
@@ -14,9 +26,13 @@ int main() {
 	if (s >= 0) printf("Socket created sucessfully\n");
 	else { printf("Socket creation failed\n"); return 1; }
 	
-	int b = bind(s, (struct sockaddr *) &server, sizeof(server));
-	if (b >= 0) printf("Socket binded sucessfully\n");
-	else { printf("Socket binding failed\n"); return 2; }
+	for (int port_no = 3000; port_no < 3100; port_no++) {
+        server.sin_port = htons(port_no);
+        printf("Binding Socket on Port %d...\n", port_no);
+        int b = bind(s, (struct sockaddr*) &server, sizeof(server));
+        if (b < 0) { printf("\e[1A\e[2KBinding Socket on Port %d...\t\t[FAIL]\n", port_no); }
+        else { printf("\e[1A\e[2KBinding Socket on Port %d...\t\t[OK]\n", port_no); break; }
+    }
 	
 	while (1) {
 		char read_buff[100], write_buff[100];
@@ -25,10 +41,17 @@ int main() {
 		recvfrom(s, read_buff, 100, 0, (struct sockaddr *) &client, &clen);
 		
 		if (strcmp("SHUTDOWN", read_buff) == 0) break;
+
+		if (strcmp("PROMPT", read_buff) == 0) {
+			sprintf(write_buff, ">> ");
+			sendto(s, write_buff, strlen(write_buff)+1, 0, (struct sockaddr *) &client, sizeof(client));
+			continue;
+		}
+
 		printf("%s\n", read_buff);
 		
 		printf(">> ");
-		scanf("%s", write_buff);
+		getstr(write_buff, stdin);
 		sendto(s, write_buff, strlen(write_buff)+1, 0, (struct sockaddr *) &client, sizeof(client));
 	}
 	

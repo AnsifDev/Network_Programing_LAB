@@ -4,11 +4,9 @@
 #include <string.h>
 #include <unistd.h>
 
-int is_palindrome(char *str) {
-    int slen  = strlen(str);
-    for (int i = 0; i < slen/2; i++) 
-        if (str[i] != str[slen-1-i]) return 0;
-    return 1;
+void make_response(char *str) {
+    printf("  >> ");
+    scanf("%s", str);
 }
 
 int main() {
@@ -35,10 +33,12 @@ int main() {
     int run = 1;
     while (run) {
         printf("Waiting for a connection...\n");
-        socklen_t socketlen = sizeof(client);
+        socklen_t socketlen = sizeof(server);
         int ns = accept(s, (struct sockaddr*) &client, &socketlen);
         if (ns < 0) { printf("Connection to client Failed\n"); return 1; }
         else printf("New Client Connected\n");
+
+        int packet_number = 0;
 
         while (1) {
             char read_buff[100], write_buff[100];
@@ -48,16 +48,25 @@ int main() {
             if (strcmp("SHUTDOWN", read_buff) == 0) { run = 0; break; }
 
             if (strcmp("PROMPT", read_buff) == 0) {
-                sprintf(write_buff, ">> ");
+                sprintf(write_buff, "Enter the Frame Number: ");
                 write(ns, write_buff, strlen(write_buff)+1);
                 continue;
             }
             
-            int is_pal = is_palindrome(read_buff);
-            sprintf(write_buff, "It is%sa palindrome", is_pal? " ": " not ");
+
+            int packet_received = 0;
+            sscanf(read_buff, "%d", &packet_received);
+
+            if (packet_received != packet_number) {
+                sprintf(write_buff, "Resend Frame %d", packet_number);
+                printf("ERR: Frame %d not received\n", packet_number);
+            }
+            else {
+                printf("Frame %d Received\n", packet_number);
+                sprintf(write_buff, "ACK %d Received", packet_number++);
+            }
 
             write(ns, write_buff, strlen(write_buff)+1);
-            printf("  %s\n", write_buff);
         }
 
         printf("Client Disconnected\n");
