@@ -11,7 +11,7 @@ int getstr(char *str, FILE *src) {
         c = fgetc(src);
         if (c == '\n') { if (str_len > 0) break; }
         else str[str_len++] = c;
-    } 
+    }
     str[str_len] = '\0';
     return str_len;
 }
@@ -50,9 +50,16 @@ int main() {
         int written_size = write(s, write_buff, strlen(write_buff)+1);
         if (strcmp("SHUTDOWN", write_buff) == 0) { close(s); break; }
 
-        int r = read(s, read_buff, 100);
-        if (r == 0) break;
-        printf("%s\n", read_buff);
+        int read_loop = 1;
+        while (read_loop) {
+            int r = read(s, read_buff, 100);
+            if (r == 0) break;
+            if (read_buff[r-1] == '\0') read_loop = 0;
+            else read_buff[r] = '\0';
+            printf("%s", read_buff);
+        }
+        printf("\n");
+        
     }
 
     return 0;
