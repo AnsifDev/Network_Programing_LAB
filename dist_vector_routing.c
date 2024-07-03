@@ -44,7 +44,7 @@ void exchange(int node_count, VectorTableRow vector_store[node_count][node_count
     SparseTableRow updates[node_count*node_count];
     int updates_len = 0;
 
-    printf("Calculating Changes:\n");
+    // printf("Calculating Changes:\n");
     for (int node = 0; node < node_count; node++) { // For Each Node
         for (int dest = node+1; dest < node_count; dest++) { // For Each Row
             if (node == dest) continue; // Omit Self Record
@@ -85,18 +85,18 @@ void exchange(int node_count, VectorTableRow vector_store[node_count][node_count
                 updates[updates_len].dist = new_dist;
                 updates[updates_len].next = vector_store[node][neigbhour].next;
                 updates[updates_len].dest_next = vector_store[dest][neigbhour_dest].next;
-                printf("* [N%d - N%d]: (%d, N%d, N%d)\n", node, dest, updates[updates_len].dist, updates[updates_len].next, updates[updates_len].dest_next);
+                // printf("* [N%d - N%d]: (%d, N%d, N%d)\n", node, dest, updates[updates_len].dist, updates[updates_len].next, updates[updates_len].dest_next);
             }
 
             if (min != vector_store[node][dest].dist) updates_len++;
         }
     }
 
-    printf("Applying Changes: %d\n", updates_len);
+    // printf("Applying Changes: %d\n", updates_len);
     for (int i = 0; i < updates_len; i++) {
         int node = updates[i].node;
         int dest = updates[i].dest;
-        printf("* [N%d - N%d]: (%d, N%d, N%d)\n", node, dest, updates[i].dist, updates[i].next, updates[i].dest_next);
+        // printf("* [N%d - N%d]: (%d, N%d, N%d)\n", node, dest, updates[i].dist, updates[i].next, updates[i].dest_next);
         vector_store[node][dest].dist = vector_store[dest][node].dist = updates[i].dist;
         vector_store[node][dest].next = updates[i].next;
         vector_store[dest][node].next = updates[i].dest_next;

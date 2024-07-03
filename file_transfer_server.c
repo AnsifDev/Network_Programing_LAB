@@ -54,21 +54,18 @@ int main() {
             if (r == 0) break;
             if (strcmp("SHUTDOWN", read_buff) == 0) { run = 0; break; }
 
-            if (strcmp("PROMPT", read_buff) == 0) {
-                sprintf(write_buff, "Enter the filename: ");
-                write(ns, write_buff, strlen(write_buff)+1);
-                continue;
-            }
+            if (strcmp("PROMPT", read_buff) == 0) write(ns, write_buff, strlen(write_buff)+1);
+            else {
+                FILE *file = fopen(read_buff, "r");
+                int str_len = 0;
+                while ((str_len = read_file(write_buff, file, 99)) != 0) {
+                    write(ns, write_buff, str_len);
 
-            FILE *file = fopen(read_buff, "r");
-            int str_len = 0;
-            while ((str_len = read_file(write_buff, file, 99)) != 0) {
-                write(ns, write_buff, str_len);
-
-                write_buff[str_len] = '\0';
-                printf("%s", write_buff);
+                    write_buff[str_len] = '\0';
+                    printf("%s", write_buff);
+                }
+                printf("\n");
             }
-            printf("\n");
             write(ns, "\0", 1);
         }
 

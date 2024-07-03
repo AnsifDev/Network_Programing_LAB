@@ -39,14 +39,4 @@ void main () {
             if (packets_waiting > output_rate) printf("Packets left in Bucket: %d out of %d\n", packets_waiting, bucket_size);
             else printf("Packets left in Bucket: %d out of %d\n", packets_waiting, bucket_size);
     }
-    
-    // while (packets_waiting > 0) {
-    //     if (packets_waiting > output_rate) printf("Sending %d Packets\n", output_rate);
-    //     else printf("Sending %d Packets\n", packets_waiting);
-
-    //     packets_waiting -= packets_waiting > output_rate ? output_rate: packets_waiting;
-
-    //     if (packets_waiting > output_rate) printf("Packets left in Bucket: %d out of %d\n", packets_waiting, bucket_size);
-    //     else printf("Packets left in Bucket: %d out of %d\n", packets_waiting, bucket_size);
-    // }
 }
